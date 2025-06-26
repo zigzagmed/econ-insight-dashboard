@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle, Calculator } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 
 interface Coefficient {
   variable: string;
@@ -42,6 +42,7 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
     return {
       overallFit: `The model demonstrates ${modelFit} explanatory power with an R² of ${formatNumber(rSquared, 3)} (${formatNumber(rSquared * 100, 1)}% of variance explained). The adjusted R² of ${formatNumber(adjustedRSquared, 3)} accounts for the number of predictors, providing a more conservative estimate of model performance.`,
       significance: `${significantVars} out of ${coefficients.length} independent variables show statistically significant relationships with ${dependentVariable}.`,
+      modelValidDescription: `Significant variables have p-values < 0.05, indicating their effects are unlikely due to chance.`,
       modelValid: pValueF < 0.05,
       interpretation: rSquared > 0.7 ? 'This indicates strong predictive capability.' : 
                      rSquared > 0.5 ? 'This suggests reasonable predictive capability.' :
@@ -92,47 +93,31 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
       {/* Model Assessment */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <AlertCircle size={20} className="text-blue-600" />
-            <span>Model Assessment</span>
-          </CardTitle>
+          <CardTitle>Model Assessment</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-start space-x-3">
-            <CheckCircle size={16} className="text-green-600 mt-1" />
-            <div>
-              <h4 className="font-semibold text-slate-800">Model Fit & Explanatory Power</h4>
-              <p className="text-slate-600 mb-2">{interpretation.overallFit}</p>
-              <p className="text-slate-600">{interpretation.interpretation}</p>
-            </div>
+          <div className="border-l-4 border-blue-500 pl-4">
+            <h4 className="font-semibold text-slate-800">Model Fit & Explanatory Power</h4>
+            <p className="text-sm text-slate-600 mb-2">{interpretation.overallFit}</p>
+            <p className="text-sm text-slate-600">{interpretation.interpretation}</p>
           </div>
           
-          <div className="flex items-start space-x-3">
-            <CheckCircle size={16} className="text-green-600 mt-1" />
-            <div>
-              <h4 className="font-semibold text-slate-800">Variable Significance</h4>
-              <p className="text-slate-600">{interpretation.significance}</p>
-              <p className="text-slate-600 text-sm mt-1">
-                Significant variables have p-values &lt; 0.05, indicating their effects are unlikely due to chance.
-              </p>
-            </div>
+          <div className="border-l-4 border-slate-300 pl-4">
+            <h4 className="font-semibold text-slate-800">Variable Significance</h4>
+            <p className="text-sm text-slate-600">{interpretation.significance}</p>
+            <p className="text-sm text-slate-600 mt-1">
+              {interpretation.modelValidDescription}
+            </p>
           </div>
 
-          <div className="flex items-start space-x-3">
-            {interpretation.modelValid ? (
-              <CheckCircle size={16} className="text-green-600 mt-1" />
-            ) : (
-              <AlertCircle size={16} className="text-red-600 mt-1" />
-            )}
-            <div>
-              <h4 className="font-semibold text-slate-800">Overall Model Validity</h4>
-              <p className="text-slate-600">
-                {interpretation.modelValid 
-                  ? `The F-statistic (p = ${formatNumber(pValueF, 3)}) confirms the model is statistically significant, meaning it explains variance in ${dependentVariable} better than chance alone.`
-                  : `The F-statistic (p = ${formatNumber(pValueF, 3)}) suggests the model may not significantly improve upon a simple mean prediction.`
-                }
-              </p>
-            </div>
+          <div className="border-l-4 border-slate-300 pl-4">
+            <h4 className="font-semibold text-slate-800">Overall Model Validity</h4>
+            <p className="text-sm text-slate-600">
+              {interpretation.modelValid 
+                ? `The F-statistic (p = ${formatNumber(pValueF, 3)}) confirms the model is statistically significant, meaning it explains variance in ${dependentVariable} better than chance alone.`
+                : `The F-statistic (p = ${formatNumber(pValueF, 3)}) suggests the model may not significantly improve upon a simple mean prediction.`
+              }
+            </p>
           </div>
         </CardContent>
       </Card>
