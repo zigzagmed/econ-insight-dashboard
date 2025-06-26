@@ -22,18 +22,13 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
         summary: "This model demonstrates solid explanatory power with an R² of 0.742, indicating that approximately 74% of the variation in the dependent variable is explained by the included predictors. The F-statistic confirms the model is statistically significant overall."
       },
       keyFindings: [
-        {
-          title: "Model Performance Analysis",
-          content: `The regression model shows strong explanatory power with ${results.coefficients.filter((c: any) => c.significance === '***').length} highly significant variables out of ${results.coefficients.length} total predictors. This suggests that the majority of selected variables have meaningful relationships with the dependent variable. The adjusted R-squared of ${(results.adjustedRSquared * 100).toFixed(1)}% indicates that the model accounts for a substantial portion of the variance while penalizing for model complexity.`
-        },
-        {
-          title: "Statistical Significance Assessment",
-          content: `The overall F-statistic of ${results.fStatistic.toFixed(2)} with a p-value near zero demonstrates that the model is statistically superior to a model with no predictors. Individual coefficient analysis reveals varying levels of significance, with the most significant predictors showing p-values below 0.001. This heterogeneity in significance levels suggests that some variables may be more critical than others in explaining the dependent variable.`
-        },
-        {
-          title: "Economic and Practical Interpretation",
-          content: `From an economic perspective, the positive and negative coefficients observed in the model align with theoretical expectations for most variables. The intercept value suggests a baseline level of the dependent variable when all predictors are zero. The magnitude of coefficients indicates the practical significance of each variable, with larger coefficients suggesting stronger economic impacts per unit change in the predictor.`
-        }
+        "The regression model exhibits strong explanatory power, with an R-squared value of 0.742 suggesting that approximately 74% of the variance in the dependent variable can be attributed to the selected independent variables. This level of explanatory power indicates a robust relationship between the predictors and the outcome variable.",
+        
+        "Statistical significance analysis reveals that the majority of included variables demonstrate meaningful relationships with the dependent variable. The F-statistic provides strong evidence that the model performs significantly better than a baseline model with no predictors, validating the overall model specification.",
+        
+        "The adjusted R-squared value of 0.738 remains close to the unadjusted R-squared, indicating that the model does not suffer from overfitting due to excessive variables. This suggests that the selected predictors genuinely contribute to explaining the variance rather than merely capitalizing on random variation in the data.",
+        
+        "Coefficient magnitudes and their associated standard errors indicate stable parameter estimates. The statistical significance levels observed across different variables provide insights into which factors have the strongest and most reliable effects on the dependent variable, enabling prioritization of policy or business interventions."
       ],
       recommendations: [
         "Consider adding interaction terms between significant variables to capture more complex relationships",
@@ -42,9 +37,26 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
         "Consider time series analysis if data has temporal structure"
       ],
       technicalNotes: {
-        goodnessOfFit: "The adjusted R² of 0.738 accounts for model complexity and confirms good explanatory power.",
-        significance: "The F-statistic indicates the model is significantly better than a null model with no predictors.",
-        coefficients: "Standard errors appear reasonable relative to coefficient magnitudes, suggesting stable estimates."
+        modelSpecification: {
+          title: "Model Specification Analysis",
+          content: "The current model specification appears well-balanced with an appropriate number of predictors relative to the sample size. The ratio of observations to parameters suggests adequate degrees of freedom for reliable statistical inference. The inclusion of multiple independent variables allows for controlling confounding effects while examining individual variable impacts."
+        },
+        statisticalAssumptions: {
+          title: "Statistical Assumptions Assessment",
+          content: "Key regression assumptions should be verified through diagnostic testing. The model assumes linear relationships between predictors and the dependent variable, independence of observations, homoscedasticity (constant variance of residuals), and normality of residuals. Violation of these assumptions could affect the reliability of coefficient estimates and statistical tests."
+        },
+        coefficientReliability: {
+          title: "Coefficient Reliability and Interpretation",
+          content: "Standard errors relative to coefficient magnitudes indicate the precision of parameter estimates. Smaller standard errors relative to coefficients suggest more reliable estimates. The t-statistics and associated p-values provide evidence for statistical significance, while confidence intervals would offer additional insight into the range of plausible parameter values."
+        },
+        modelValidation: {
+          title: "Model Validation and Robustness",
+          content: "The high F-statistic and low p-value indicate strong overall model significance. However, additional validation through cross-validation, out-of-sample testing, or alternative model specifications would strengthen confidence in the results. Consider examining residual patterns to identify potential model improvements or assumption violations."
+        },
+        practicalSignificance: {
+          title: "Practical vs Statistical Significance",
+          content: "While statistical significance indicates reliable effects, practical significance depends on the magnitude of coefficients in the context of the problem domain. Large coefficients may indicate substantial practical impact, while small coefficients might be statistically significant but practically negligible. Economic or business significance should be evaluated alongside statistical measures."
+        }
       }
     };
   };
@@ -116,9 +128,8 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
             </h4>
             <div className="space-y-4">
               {aiInsights.keyFindings.map((finding, index) => (
-                <div key={index} className="p-3 bg-slate-50 rounded-lg">
-                  <h5 className="text-sm font-medium text-slate-800 mb-2">{finding.title}</h5>
-                  <p className="text-sm text-slate-600 leading-relaxed">{finding.content}</p>
+                <div key={index} className="border-l-4 border-blue-300 pl-4">
+                  <p className="text-sm text-slate-700 leading-relaxed">{finding}</p>
                 </div>
               ))}
             </div>
@@ -151,7 +162,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Technical Notes */}
+          {/* Expanded Technical Analysis */}
           <Collapsible>
             <CollapsibleTrigger className="w-full">
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
@@ -165,19 +176,13 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-2">
-              <div className="bg-white p-4 rounded-lg border border-blue-200 space-y-3">
-                <div>
-                  <h5 className="text-sm font-medium text-slate-800">Goodness of Fit</h5>
-                  <p className="text-sm text-slate-600">{aiInsights.technicalNotes.goodnessOfFit}</p>
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium text-slate-800">Statistical Significance</h5>
-                  <p className="text-sm text-slate-600">{aiInsights.technicalNotes.significance}</p>
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium text-slate-800">Coefficient Analysis</h5>
-                  <p className="text-sm text-slate-600">{aiInsights.technicalNotes.coefficients}</p>
-                </div>
+              <div className="bg-white rounded-lg border border-blue-200 divide-y divide-slate-200">
+                {Object.entries(aiInsights.technicalNotes).map(([key, section]) => (
+                  <div key={key} className="p-4">
+                    <h5 className="text-sm font-semibold text-slate-800 mb-2">{section.title}</h5>
+                    <p className="text-sm text-slate-600 leading-relaxed">{section.content}</p>
+                  </div>
+                ))}
               </div>
             </CollapsibleContent>
           </Collapsible>
