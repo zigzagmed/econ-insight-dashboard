@@ -2,7 +2,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface Coefficient {
   variable: string;
@@ -59,14 +58,7 @@ const RegressionTable: React.FC<RegressionTableProps> = ({ coefficients, interce
             <tbody>
               <tr className="border-b border-slate-100 hover:bg-slate-50">
                 <td className="p-3 font-medium">Intercept</td>
-                <td className="text-right p-3 font-mono flex items-center justify-end space-x-1">
-                  {intercept.coefficient > 0 ? (
-                    <TrendingUp size={14} className="text-green-600" />
-                  ) : (
-                    <TrendingDown size={14} className="text-red-600" />
-                  )}
-                  <span>{formatNumber(intercept.coefficient)}</span>
-                </td>
+                <td className="text-right p-3 font-mono">{formatNumber(intercept.coefficient)}</td>
                 <td className="text-right p-3 font-mono">{formatNumber(intercept.standardError)}</td>
                 <td className="text-right p-3 font-mono">{formatNumber(intercept.tStatistic)}</td>
                 <td className="text-right p-3 font-mono">{formatNumber(intercept.pValue)}</td>
@@ -81,14 +73,7 @@ const RegressionTable: React.FC<RegressionTableProps> = ({ coefficients, interce
               {coefficients.map((coef) => (
                 <tr key={coef.variable} className="border-b border-slate-100 hover:bg-slate-50">
                   <td className="p-3 font-medium">{coef.variable}</td>
-                  <td className="text-right p-3 font-mono flex items-center justify-end space-x-1">
-                    {coef.coefficient > 0 ? (
-                      <TrendingUp size={14} className="text-green-600" />
-                    ) : (
-                      <TrendingDown size={14} className="text-red-600" />
-                    )}
-                    <span>{formatNumber(coef.coefficient)}</span>
-                  </td>
+                  <td className="text-right p-3 font-mono">{formatNumber(coef.coefficient)}</td>
                   <td className="text-right p-3 font-mono">{formatNumber(coef.standardError)}</td>
                   <td className="text-right p-3 font-mono">{formatNumber(coef.tStatistic)}</td>
                   <td className="text-right p-3 font-mono">{formatNumber(coef.pValue)}</td>

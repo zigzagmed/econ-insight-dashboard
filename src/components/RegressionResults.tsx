@@ -60,15 +60,18 @@ const RegressionResults: React.FC<RegressionResultsProps> = ({ modelConfig }) =>
       <ModelSummary 
         nObservations={results.nObservations}
         rSquared={results.rSquared}
+        adjustedRSquared={results.adjustedRSquared}
         fStatistic={results.fStatistic}
         pValueF={results.pValueF}
       />
 
       <ModelInterpretation 
         rSquared={results.rSquared}
+        adjustedRSquared={results.adjustedRSquared}
         pValueF={results.pValueF}
         dependentVariable={results.dependentVariable}
         coefficients={results.coefficients}
+        intercept={results.intercept}
       />
 
       <AIInsights results={results} />
