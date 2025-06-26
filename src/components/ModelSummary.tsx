@@ -28,6 +28,9 @@ const ModelSummary: React.FC<ModelSummaryProps> = ({
   const aic = -2 * logLikelihood + 2 * 4; // Mock AIC
   const bic = -2 * logLikelihood + Math.log(nObservations) * 4; // Mock BIC
   const durbinWatson = 1.85 + Math.random() * 0.3; // Mock DW statistic
+  const jbStat = 2.45 + Math.random() * 1.5; // Mock Jarque-Bera
+  const bpStat = 3.21 + Math.random() * 2.0; // Mock Breusch-Pagan
+  const whiteStat = 4.67 + Math.random() * 3.0; // Mock White test
 
   const StatCard = ({ 
     value, 
@@ -41,7 +44,7 @@ const ModelSummary: React.FC<ModelSummaryProps> = ({
     <Card className="text-center">
       <CardContent className="p-4">
         <div className="flex items-center justify-center space-x-1 mb-1">
-          <div className="text-2xl font-bold text-blue-600">{value}</div>
+          <div className="text-xl font-bold text-blue-600">{value}</div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -106,18 +109,44 @@ const ModelSummary: React.FC<ModelSummaryProps> = ({
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard 
           value={formatNumber(durbinWatson, 2)}
           label="Durbin-Watson"
           tooltip="Tests for autocorrelation in residuals. Values around 2 indicate no autocorrelation, while values near 0 or 4 suggest positive or negative autocorrelation."
         />
+        <StatCard 
+          value={formatNumber(jbStat, 2)}
+          label="Jarque-Bera"
+          tooltip="Tests for normality of residuals. Low p-values (< 0.05) suggest residuals are not normally distributed."
+        />
+        <StatCard 
+          value={formatNumber(bpStat, 2)}
+          label="Breusch-Pagan"
+          tooltip="Tests for heteroscedasticity (non-constant variance). Low p-values suggest heteroscedasticity is present."
+        />
+        <StatCard 
+          value={formatNumber(whiteStat, 2)}
+          label="White Test"
+          tooltip="Alternative test for heteroscedasticity that doesn't assume a specific form. Low p-values indicate heteroscedasticity."
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="text-center">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-xl font-bold text-blue-600">
               {pValueF < 0.001 ? 'Excellent' : pValueF < 0.01 ? 'Good' : pValueF < 0.05 ? 'Moderate' : 'Poor'}
             </div>
             <div className="text-sm text-slate-600">Model Quality</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-xl font-bold text-blue-600">
+              {adjustedRSquared > 0.7 ? 'Strong' : adjustedRSquared > 0.5 ? 'Moderate' : 'Weak'}
+            </div>
+            <div className="text-sm text-slate-600">Explanatory Power</div>
           </CardContent>
         </Card>
       </div>

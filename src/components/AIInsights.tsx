@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Brain, ChevronDown, Lightbulb, Target, TrendingUpDown, CheckCircle, AlertCircle } from 'lucide-react';
+import { Brain, ChevronDown, Lightbulb, Target, TrendingUpDown } from 'lucide-react';
 
 interface AIInsightsProps {
   results: any;
@@ -23,19 +23,16 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       },
       keyFindings: [
         {
-          type: "strength",
-          title: "Strong Predictive Variables",
-          content: `${results.coefficients.filter((c: any) => c.significance === '***').length} variables show highly significant relationships (p < 0.001), indicating robust predictive power.`
+          title: "Model Performance Analysis",
+          content: `The regression model shows strong explanatory power with ${results.coefficients.filter((c: any) => c.significance === '***').length} highly significant variables out of ${results.coefficients.length} total predictors. This suggests that the majority of selected variables have meaningful relationships with the dependent variable. The adjusted R-squared of ${(results.adjustedRSquared * 100).toFixed(1)}% indicates that the model accounts for a substantial portion of the variance while penalizing for model complexity.`
         },
         {
-          type: "insight",
-          title: "Economic Interpretation",
-          content: "The positive coefficients suggest complementary relationships between key economic indicators, which aligns with economic theory."
+          title: "Statistical Significance Assessment",
+          content: `The overall F-statistic of ${results.fStatistic.toFixed(2)} with a p-value near zero demonstrates that the model is statistically superior to a model with no predictors. Individual coefficient analysis reveals varying levels of significance, with the most significant predictors showing p-values below 0.001. This heterogeneity in significance levels suggests that some variables may be more critical than others in explaining the dependent variable.`
         },
         {
-          type: "warning",
-          title: "Model Limitations",
-          content: "While the model shows good fit, consider testing for potential multicollinearity between highly correlated predictors."
+          title: "Economic and Practical Interpretation",
+          content: `From an economic perspective, the positive and negative coefficients observed in the model align with theoretical expectations for most variables. The intercept value suggests a baseline level of the dependent variable when all predictors are zero. The magnitude of coefficients indicates the practical significance of each variable, with larger coefficients suggesting stronger economic impacts per unit change in the predictor.`
         }
       ],
       recommendations: [
@@ -60,15 +57,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       setIsLoadingInsights(false);
       setIsAIInsightsOpen(true);
     }, 2000);
-  };
-
-  const getInsightIcon = (type: string) => {
-    switch (type) {
-      case 'strength': return <CheckCircle size={16} className="text-green-600" />;
-      case 'insight': return <Lightbulb size={16} className="text-blue-600" />;
-      case 'warning': return <AlertCircle size={16} className="text-orange-600" />;
-      default: return <Target size={16} className="text-gray-600" />;
-    }
   };
 
   return (
@@ -114,26 +102,23 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
           <div className="bg-white p-4 rounded-lg border border-blue-200">
             <div className="flex items-center space-x-2 mb-3">
               <TrendingUpDown size={18} className="text-blue-600" />
-              <h4 className="font-semibold text-slate-800">Overall Model Assessment</h4>
+              <h4 className="text-base font-semibold text-slate-800">Overall Model Assessment</h4>
               <Badge className="bg-green-100 text-green-800">{aiInsights.overallAssessment.quality}</Badge>
             </div>
-            <p className="text-slate-700">{aiInsights.overallAssessment.summary}</p>
+            <p className="text-sm text-slate-700">{aiInsights.overallAssessment.summary}</p>
           </div>
 
           {/* Key Findings */}
           <div className="bg-white p-4 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-slate-800 mb-4 flex items-center space-x-2">
+            <h4 className="text-base font-semibold text-slate-800 mb-4 flex items-center space-x-2">
               <Lightbulb size={18} className="text-blue-600" />
               <span>Key Findings</span>
             </h4>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {aiInsights.keyFindings.map((finding, index) => (
-                <div key={index} className="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
-                  {getInsightIcon(finding.type)}
-                  <div>
-                    <h5 className="font-medium text-slate-800">{finding.title}</h5>
-                    <p className="text-sm text-slate-600 mt-1">{finding.content}</p>
-                  </div>
+                <div key={index} className="p-3 bg-slate-50 rounded-lg">
+                  <h5 className="text-sm font-medium text-slate-800 mb-2">{finding.title}</h5>
+                  <p className="text-sm text-slate-600 leading-relaxed">{finding.content}</p>
                 </div>
               ))}
             </div>
@@ -144,7 +129,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
             <CollapsibleTrigger className="w-full">
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-slate-800 flex items-center space-x-2">
+                  <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
                     <Target size={18} className="text-blue-600" />
                     <span>AI Recommendations</span>
                   </h4>
@@ -171,8 +156,8 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
             <CollapsibleTrigger className="w-full">
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-slate-800 flex items-center space-x-2">
-                    <AlertCircle size={18} className="text-blue-600" />
+                  <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
+                    <Brain size={18} className="text-blue-600" />
                     <span>Technical Analysis</span>
                   </h4>
                   <ChevronDown size={18} className="text-slate-600" />
@@ -182,15 +167,15 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
             <CollapsibleContent className="mt-2">
               <div className="bg-white p-4 rounded-lg border border-blue-200 space-y-3">
                 <div>
-                  <h5 className="font-medium text-slate-800">Goodness of Fit</h5>
+                  <h5 className="text-sm font-medium text-slate-800">Goodness of Fit</h5>
                   <p className="text-sm text-slate-600">{aiInsights.technicalNotes.goodnessOfFit}</p>
                 </div>
                 <div>
-                  <h5 className="font-medium text-slate-800">Statistical Significance</h5>
+                  <h5 className="text-sm font-medium text-slate-800">Statistical Significance</h5>
                   <p className="text-sm text-slate-600">{aiInsights.technicalNotes.significance}</p>
                 </div>
                 <div>
-                  <h5 className="font-medium text-slate-800">Coefficient Analysis</h5>
+                  <h5 className="text-sm font-medium text-slate-800">Coefficient Analysis</h5>
                   <p className="text-sm text-slate-600">{aiInsights.technicalNotes.coefficients}</p>
                 </div>
               </div>

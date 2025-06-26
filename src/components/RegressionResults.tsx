@@ -45,13 +45,6 @@ const RegressionResults: React.FC<RegressionResultsProps> = ({ modelConfig }) =>
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Regression Results</h2>
-        <p className="text-slate-600">
-          {modelConfig.type.charAt(0).toUpperCase() + modelConfig.type.slice(1)} regression of {modelConfig.dependentVariable}
-        </p>
-      </div>
-
       <RegressionTable 
         coefficients={results.coefficients}
         intercept={results.intercept}
