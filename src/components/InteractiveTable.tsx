@@ -1,6 +1,6 @@
 
-import React, { useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ModelStatsSection } from './ModelStatsSection';
 import { TableSection } from './TableSection';
 import { SignificanceLegend } from './SignificanceLegend';
@@ -21,34 +21,10 @@ export const InteractiveTable: React.FC<InteractiveTableProps> = React.memo(({
   onConfigChange,
   onHeaderChange
 }) => {
-  const [customizeOpen, setCustomizeOpen] = useState(false);
-  const [exportOpen, setExportOpen] = useState(false);
-
-  const handleCustomizeOpenChange = useCallback((open: boolean) => {
-    setCustomizeOpen(open);
-  }, []);
-
-  const handleExportOpenChange = useCallback((open: boolean) => {
-    setExportOpen(open);
-  }, []);
-
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{config.tableTitle}</CardTitle>
-          <TableActions
-            config={config}
-            customHeaders={customHeaders}
-            data={data}
-            customizeOpen={customizeOpen}
-            exportOpen={exportOpen}
-            onCustomizeOpenChange={handleCustomizeOpenChange}
-            onExportOpenChange={handleExportOpenChange}
-            onConfigChange={onConfigChange}
-            onHeaderChange={onHeaderChange}
-          />
-        </div>
+        <TableActions title={config.tableTitle} />
       </CardHeader>
       <CardContent>
         <ModelStatsSection data={data} config={config} />

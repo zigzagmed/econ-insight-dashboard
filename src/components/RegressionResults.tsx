@@ -43,16 +43,16 @@ const RegressionResults: React.FC<RegressionResultsProps> = ({ modelConfig }) =>
   const results = generateMockResults(modelConfig);
 
   // Interactive table configuration
-  const [tableConfig, setTableConfig] = useState({
+  const [tableConfig] = useState({
     visibleColumns: ['variable', 'coef', 'std_err', 't', 'p_value', 'ci_lower', 'ci_upper'],
     decimalPlaces: 4,
     showSignificance: true,
-    tableTitle: 'Regression Results',
+    tableTitle: 'Regression Table',
     includeModelStats: true,
     columnOrder: ['variable', 'coef', 'std_err', 't', 'p_value', 'ci_lower', 'ci_upper']
   });
 
-  const [customHeaders, setCustomHeaders] = useState({
+  const [customHeaders] = useState({
     variable: 'Variable',
     coef: 'Coefficient',
     std_err: 'Std. Error',
@@ -62,22 +62,14 @@ const RegressionResults: React.FC<RegressionResultsProps> = ({ modelConfig }) =>
     ci_upper: '0.975]'
   });
 
-  const handleConfigChange = (newConfig: any) => {
-    setTableConfig(prev => ({ ...prev, ...newConfig }));
-  };
-
-  const handleHeaderChange = (column: string, newHeader: string) => {
-    setCustomHeaders(prev => ({ ...prev, [column]: newHeader }));
-  };
-
   return (
     <div className="space-y-6">
       <InteractiveTable 
         data={results}
         config={tableConfig}
         customHeaders={customHeaders}
-        onConfigChange={handleConfigChange}
-        onHeaderChange={handleHeaderChange}
+        onConfigChange={() => {}}
+        onHeaderChange={() => {}}
       />
 
       <ModelInterpretation 
