@@ -42,52 +42,77 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
     return (
       <TooltipProvider>
         <div className="text-lg font-mono font-semibold text-blue-800 mb-2">
-          <span>{dependentVariable} = </span>
           <Tooltip>
-            <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
+              {dependentVariable}
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
+              <div className="space-y-1">
+                <p className="font-medium">Dependent Variable: {dependentVariable}</p>
+                <p className="text-sm text-muted-foreground">
+                  The outcome variable being predicted by the model
+                </p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+          <span> = </span>
+          <Tooltip>
+            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
               {intercept_val}
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Intercept: {intercept_val}</p>
-              <p className="text-xs">The expected value of {dependentVariable} when all predictors equal zero</p>
+            <TooltipContent className="max-w-xs">
+              <div className="space-y-1">
+                <p className="font-medium">Intercept: {intercept_val}</p>
+                <p className="text-sm text-muted-foreground">
+                  The expected value of {dependentVariable} when all predictors equal zero
+                </p>
+              </div>
             </TooltipContent>
           </Tooltip>
           {coefficients.map((c, index) => (
             <span key={index}>
               <span> {c.coefficient >= 0 ? '+' : ''}</span>
               <Tooltip>
-                <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+                <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
                   {formatNumber(c.coefficient, 3)}
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Coefficient for {c.variable}: {formatNumber(c.coefficient, 3)}</p>
-                  <p className="text-xs">
-                    Each unit increase in {c.variable} {c.coefficient > 0 ? 'increases' : 'decreases'} {dependentVariable} by {Math.abs(c.coefficient).toFixed(3)} units
-                  </p>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    <p className="font-medium">Coefficient: {formatNumber(c.coefficient, 3)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Each unit increase in {c.variable} {c.coefficient > 0 ? 'increases' : 'decreases'} {dependentVariable} by {Math.abs(c.coefficient).toFixed(3)} units
+                    </p>
+                  </div>
                 </TooltipContent>
               </Tooltip>
               <span>×</span>
               <Tooltip>
-                <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+                <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
                   {c.variable}
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Independent variable: {c.variable}</p>
-                  <p className="text-xs">
-                    {c.significance ? `Statistically significant (${c.significance})` : 'Not statistically significant'}
-                  </p>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    <p className="font-medium">Variable: {c.variable}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {c.significance ? `Statistically significant (${c.significance})` : 'Not statistically significant'}
+                    </p>
+                  </div>
                 </TooltipContent>
               </Tooltip>
             </span>
           ))}
           <span> + </span>
           <Tooltip>
-            <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
               ε
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Error term (ε)</p>
-              <p className="text-xs">Represents unexplained variation and random errors</p>
+            <TooltipContent className="max-w-xs">
+              <div className="space-y-1">
+                <p className="font-medium">Error Term (ε)</p>
+                <p className="text-sm text-muted-foreground">
+                  Represents unexplained variation and random errors
+                </p>
+              </div>
             </TooltipContent>
           </Tooltip>
         </div>

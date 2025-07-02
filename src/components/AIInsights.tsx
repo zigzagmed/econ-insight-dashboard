@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Brain, ChevronDown, Lightbulb, Target, TrendingUpDown } from 'lucide-react';
+import { Brain, ChevronDown, Lightbulb, Target } from 'lucide-react';
 
 interface AIInsightsProps {
   results: any;
@@ -36,10 +37,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
   // Mock AI insights generation
   const generateMockAIInsights = (results: any) => {
     return {
-      overallAssessment: {
-        quality: "Strong",
-        summary: "This model demonstrates solid explanatory power with an R² of 0.742, indicating that approximately 74% of the variation in the dependent variable is explained by the included predictors. The F-statistic confirms the model is statistically significant overall."
-      },
       keyFindings: [
         "The regression model exhibits strong explanatory power, with an R-squared value of 0.742 suggesting that approximately 74% of the variance in the dependent variable can be attributed to the selected independent variables. This level of explanatory power indicates a robust relationship between the predictors and the outcome variable.",
         
@@ -158,16 +155,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Overall Assessment */}
-          <div className="bg-white p-4 rounded-lg border border-blue-200">
-            <div className="flex items-center space-x-2 mb-3">
-              <TrendingUpDown size={18} className="text-blue-600" />
-              <h4 className="text-base font-semibold text-slate-800">Overall Model Assessment</h4>
-              <Badge className="bg-green-100 text-green-800">{aiInsights.overallAssessment.quality}</Badge>
-            </div>
-            <p className="text-sm text-slate-700">{aiInsights.overallAssessment.summary}</p>
           </div>
 
           {/* Key Findings */}
