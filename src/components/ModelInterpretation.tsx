@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calculator } from 'lucide-react';
 
 interface Coefficient {
   variable: string;
@@ -50,8 +49,7 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
       {/* Regression Equation */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Calculator size={20} className="text-blue-600" />
+          <CardTitle>
             <span>Regression Equation</span>
           </CardTitle>
         </CardHeader>

@@ -24,7 +24,7 @@ export const InteractiveTable: React.FC<InteractiveTableProps> = React.memo(({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">
+        <CardTitle>
           <TableActions title={config.tableTitle} />
         </CardTitle>
       </CardHeader>
