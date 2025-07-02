@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Fish, ChevronDown, Lightbulb, Target, TrendingUpDown } from 'lucide-react';
+import { Brain, ChevronDown, Lightbulb, Target, TrendingUpDown } from 'lucide-react';
 
 interface AIInsightsProps {
   results: any;
@@ -97,7 +97,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-3">
             <div className="p-2 bg-blue-600 rounded-lg">
-              <Fish size={20} className="text-white" />
+              <Brain size={20} className="text-white" />
             </div>
             <div>
               <span className="text-xl">AI-Powered Insights</span>
@@ -119,7 +119,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
                 </>
               ) : (
                 <>
-                  <Fish size={16} className="mr-2" />
+                  <Brain size={16} className="mr-2" />
                   Generate Insights
                 </>
               )}
@@ -218,7 +218,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
                 <div className="flex items-center justify-between">
                   <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                    <Fish size={18} className="text-blue-600" />
+                    <Brain size={18} className="text-blue-600" />
                     <span>Technical Analysis</span>
                   </h4>
                   <ChevronDown size={18} className="text-slate-600" />

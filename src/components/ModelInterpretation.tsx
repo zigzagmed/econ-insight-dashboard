@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Coefficient {
   variable: string;
@@ -34,14 +35,64 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
     return num.toFixed(decimals);
   };
 
-  // Generate regression equation
-  const generateEquation = () => {
+  // Generate regression equation with hover tooltips
+  const generateEquationWithTooltips = () => {
     const intercept_val = formatNumber(intercept.coefficient, 3);
-    const terms = coefficients.map(c => 
-      `${c.coefficient >= 0 ? '+' : ''}${formatNumber(c.coefficient, 3)}×${c.variable}`
-    ).join(' ');
     
-    return `${dependentVariable} = ${intercept_val} ${terms} + ε`;
+    return (
+      <TooltipProvider>
+        <div className="text-lg font-mono font-semibold text-blue-800 mb-2">
+          <span>{dependentVariable} = </span>
+          <Tooltip>
+            <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+              {intercept_val}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Intercept: {intercept_val}</p>
+              <p className="text-xs">The expected value of {dependentVariable} when all predictors equal zero</p>
+            </TooltipContent>
+          </Tooltip>
+          {coefficients.map((c, index) => (
+            <span key={index}>
+              <span> {c.coefficient >= 0 ? '+' : ''}</span>
+              <Tooltip>
+                <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+                  {formatNumber(c.coefficient, 3)}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Coefficient for {c.variable}: {formatNumber(c.coefficient, 3)}</p>
+                  <p className="text-xs">
+                    Each unit increase in {c.variable} {c.coefficient > 0 ? 'increases' : 'decreases'} {dependentVariable} by {Math.abs(c.coefficient).toFixed(3)} units
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <span>×</span>
+              <Tooltip>
+                <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+                  {c.variable}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Independent variable: {c.variable}</p>
+                  <p className="text-xs">
+                    {c.significance ? `Statistically significant (${c.significance})` : 'Not statistically significant'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </span>
+          ))}
+          <span> + </span>
+          <Tooltip>
+            <TooltipTrigger className="hover:bg-blue-200 px-1 rounded">
+              ε
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Error term (ε)</p>
+              <p className="text-xs">Represents unexplained variation and random errors</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
+    );
   };
 
   return (
@@ -56,12 +107,7 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
         <CardContent>
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-center">
-              <div className="text-lg font-mono font-semibold text-blue-800 mb-2">
-                {generateEquation()}
-              </div>
-              <div className="text-sm text-blue-600">
-                Where ε represents the error term (residuals)
-              </div>
+              {generateEquationWithTooltips()}
             </div>
           </div>
           <div className="mt-4 text-sm text-slate-600">
