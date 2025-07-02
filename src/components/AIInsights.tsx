@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +12,26 @@ interface AIInsightsProps {
 const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
   const [isAIInsightsOpen, setIsAIInsightsOpen] = useState(false);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+
+  const formatNumber = (num: number, decimals: number = 3) => {
+    return num.toFixed(decimals);
+  };
+
+  const getModelAssessment = () => {
+    const significantVars = results.coefficients.filter((c: any) => c.significance !== '').length;
+    const modelFit = results.rSquared > 0.7 ? 'excellent' : results.rSquared > 0.5 ? 'good' : results.rSquared > 0.3 ? 'moderate' : 'weak';
+    
+    return {
+      overallFit: `The model demonstrates ${modelFit} explanatory power with an R² of ${formatNumber(results.rSquared, 3)} (${formatNumber(results.rSquared * 100, 1)}% of variance explained). The adjusted R² of ${formatNumber(results.adjustedRSquared, 3)} accounts for the number of predictors, providing a more conservative estimate of model performance.`,
+      significance: `${significantVars} out of ${results.coefficients.length} independent variables show statistically significant relationships with ${results.dependentVariable}.`,
+      modelValidDescription: `Significant variables have p-values < 0.05, indicating their effects are unlikely due to chance.`,
+      modelValid: results.pValueF < 0.05,
+      interpretation: results.rSquared > 0.7 ? 'This indicates strong predictive capability.' : 
+                     results.rSquared > 0.5 ? 'This suggests reasonable predictive capability.' :
+                     results.rSquared > 0.3 ? 'This indicates moderate explanatory power.' :
+                     'This suggests limited explanatory power.'
+    };
+  };
 
   // Mock AI insights generation
   const generateMockAIInsights = (results: any) => {
@@ -62,6 +81,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
   };
 
   const aiInsights = generateMockAIInsights(results);
+  const modelAssessment = getModelAssessment();
 
   const handleGenerateInsights = () => {
     setIsLoadingInsights(true);
@@ -110,6 +130,36 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       
       {isAIInsightsOpen && (
         <CardContent className="space-y-6">
+          {/* Model Assessment */}
+          <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <h4 className="text-base font-semibold text-slate-800 mb-4">Model Assessment</h4>
+            <div className="space-y-4">
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h5 className="font-semibold text-slate-800">Model Fit & Explanatory Power</h5>
+                <p className="text-sm text-slate-600 mb-2">{modelAssessment.overallFit}</p>
+                <p className="text-sm text-slate-600">{modelAssessment.interpretation}</p>
+              </div>
+              
+              <div className="border-l-4 border-slate-300 pl-4">
+                <h5 className="font-semibold text-slate-800">Variable Significance</h5>
+                <p className="text-sm text-slate-600">{modelAssessment.significance}</p>
+                <p className="text-sm text-slate-600 mt-1">
+                  {modelAssessment.modelValidDescription}
+                </p>
+              </div>
+
+              <div className="border-l-4 border-slate-300 pl-4">
+                <h5 className="font-semibold text-slate-800">Overall Model Validity</h5>
+                <p className="text-sm text-slate-600">
+                  {modelAssessment.modelValid 
+                    ? `The F-statistic (p = ${formatNumber(results.pValueF, 3)}) confirms the model is statistically significant, meaning it explains variance in ${results.dependentVariable} better than chance alone.`
+                    : `The F-statistic (p = ${formatNumber(results.pValueF, 3)}) suggests the model may not significantly improve upon a simple mean prediction.`
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Overall Assessment */}
           <div className="bg-white p-4 rounded-lg border border-blue-200">
             <div className="flex items-center space-x-2 mb-3">
