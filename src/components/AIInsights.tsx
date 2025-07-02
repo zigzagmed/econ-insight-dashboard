@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Brain, ChevronDown, Lightbulb, Target } from 'lucide-react';
+import { Brain, ChevronDown } from 'lucide-react';
+import { ModelHealthScorecard } from './ModelHealthScorecard';
+import { InsightCards } from './InsightCards';
+import { ActionCards } from './ActionCards';
 
 interface AIInsightsProps {
   results: any;
@@ -79,6 +81,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
 
   const aiInsights = generateMockAIInsights(results);
   const modelAssessment = getModelAssessment();
+  const significantVars = results.coefficients.filter((c: any) => c.significance !== '').length;
 
   const handleGenerateInsights = () => {
     setIsLoadingInsights(true);
@@ -127,79 +130,48 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       
       {isAIInsightsOpen && (
         <CardContent className="space-y-6">
-          {/* Model Assessment */}
-          <div className="bg-white p-4 rounded-lg border border-blue-200">
-            <h4 className="text-base font-semibold text-slate-800 mb-4">Model Assessment</h4>
-            <div className="space-y-4">
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h5 className="font-semibold text-slate-800">Model Fit & Explanatory Power</h5>
-                <p className="text-sm text-slate-600 mb-2">{modelAssessment.overallFit}</p>
-                <p className="text-sm text-slate-600">{modelAssessment.interpretation}</p>
-              </div>
-              
-              <div className="border-l-4 border-slate-300 pl-4">
-                <h5 className="font-semibold text-slate-800">Variable Significance</h5>
-                <p className="text-sm text-slate-600">{modelAssessment.significance}</p>
-                <p className="text-sm text-slate-600 mt-1">
-                  {modelAssessment.modelValidDescription}
-                </p>
-              </div>
+          {/* Model Health Scorecard */}
+          <ModelHealthScorecard 
+            rSquared={results.rSquared}
+            adjustedRSquared={results.adjustedRSquared}
+            pValueF={results.pValueF}
+            significantVars={significantVars}
+            totalVars={results.coefficients.length}
+          />
 
-              <div className="border-l-4 border-slate-300 pl-4">
-                <h5 className="font-semibold text-slate-800">Overall Model Validity</h5>
-                <p className="text-sm text-slate-600">
-                  {modelAssessment.modelValid 
-                    ? `The F-statistic (p = ${formatNumber(results.pValueF, 3)}) confirms the model is statistically significant, meaning it explains variance in ${results.dependentVariable} better than chance alone.`
-                    : `The F-statistic (p = ${formatNumber(results.pValueF, 3)}) suggests the model may not significantly improve upon a simple mean prediction.`
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Key Findings */}
-          <div className="bg-white p-4 rounded-lg border border-blue-200">
-            <h4 className="text-base font-semibold text-slate-800 mb-4 flex items-center space-x-2">
-              <Lightbulb size={18} className="text-blue-600" />
-              <span>Key Findings</span>
+          {/* Key Insights Cards */}
+          <div>
+            <h4 className="text-lg font-semibold text-slate-800 mb-4 flex items-center space-x-2">
+              <Brain size={18} className="text-blue-600" />
+              <span>Key Insights</span>
             </h4>
-            <div className="space-y-4">
-              {aiInsights.keyFindings.map((finding, index) => (
-                <div key={index} className="border-l-4 border-blue-300 pl-4">
-                  <p className="text-sm text-slate-700 leading-relaxed">{finding}</p>
-                </div>
-              ))}
-            </div>
+            <InsightCards 
+              keyFindings={aiInsights.keyFindings}
+              rSquared={results.rSquared}
+              adjustedRSquared={results.adjustedRSquared}
+              pValueF={results.pValueF}
+            />
           </div>
 
-          {/* Recommendations */}
+          {/* Actionable Recommendations */}
           <Collapsible>
             <CollapsibleTrigger className="w-full">
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
                 <div className="flex items-center justify-between">
                   <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                    <Target size={18} className="text-blue-600" />
-                    <span>AI Recommendations</span>
+                    <Brain size={18} className="text-blue-600" />
+                    <span>Recommended Actions</span>
                   </h4>
                   <ChevronDown size={18} className="text-slate-600" />
                 </div>
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-2">
-              <div className="bg-white p-4 rounded-lg border border-blue-200">
-                <ul className="space-y-2">
-                  {aiInsights.recommendations.map((rec, index) => (
-                    <li key={index} className="flex items-start space-x-2">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-sm text-slate-700">{rec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ActionCards recommendations={aiInsights.recommendations} />
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Expanded Technical Analysis */}
+          {/* Technical Analysis */}
           <Collapsible>
             <CollapsibleTrigger className="w-full">
               <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
