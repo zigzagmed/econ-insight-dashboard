@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ModelStatsSection } from './ModelStatsSection';
 import { TableSection } from './TableSection';
 import { SignificanceLegend } from './SignificanceLegend';
@@ -24,7 +24,9 @@ export const InteractiveTable: React.FC<InteractiveTableProps> = React.memo(({
   return (
     <Card className="w-full">
       <CardHeader>
-        <TableActions title={config.tableTitle} />
+        <CardTitle className="text-xl font-semibold">
+          <TableActions title={config.tableTitle} />
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ModelStatsSection data={data} config={config} />
