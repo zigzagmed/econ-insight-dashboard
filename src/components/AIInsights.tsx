@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Brain, ChevronDown } from 'lucide-react';
 import { ModelHealthScorecard } from './ModelHealthScorecard';
-import { InsightCards } from './InsightCards';
-import { ActionCards } from './ActionCards';
+import { OptimizedInsightCards } from './OptimizedInsightCards';
+import { OptimizedActionCards } from './OptimizedActionCards';
+import { OptimizedTechnicalNotes } from './OptimizedTechnicalNotes';
+import { ClaudeService } from '@/services/claudeService';
+import type { ClaudeInsightsResponse } from '@/services/claudeService';
 
 interface AIInsightsProps {
   results: any;
@@ -15,80 +18,35 @@ interface AIInsightsProps {
 const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
   const [isAIInsightsOpen, setIsAIInsightsOpen] = useState(false);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const [aiInsights, setAiInsights] = useState<ClaudeInsightsResponse | null>(null);
 
-  const formatNumber = (num: number, decimals: number = 3) => {
-    return num.toFixed(decimals);
-  };
-
-  const getModelAssessment = () => {
-    const significantVars = results.coefficients.filter((c: any) => c.significance !== '').length;
-    const modelFit = results.rSquared > 0.7 ? 'excellent' : results.rSquared > 0.5 ? 'good' : results.rSquared > 0.3 ? 'moderate' : 'weak';
-    
-    return {
-      overallFit: `The model demonstrates ${modelFit} explanatory power with an R² of ${formatNumber(results.rSquared, 3)} (${formatNumber(results.rSquared * 100, 1)}% of variance explained). The adjusted R² of ${formatNumber(results.adjustedRSquared, 3)} accounts for the number of predictors, providing a more conservative estimate of model performance.`,
-      significance: `${significantVars} out of ${results.coefficients.length} independent variables show statistically significant relationships with ${results.dependentVariable}.`,
-      modelValidDescription: `Significant variables have p-values < 0.05, indicating their effects are unlikely due to chance.`,
-      modelValid: results.pValueF < 0.05,
-      interpretation: results.rSquared > 0.7 ? 'This indicates strong predictive capability.' : 
-                     results.rSquared > 0.5 ? 'This suggests reasonable predictive capability.' :
-                     results.rSquared > 0.3 ? 'This indicates moderate explanatory power.' :
-                     'This suggests limited explanatory power.'
-    };
-  };
-
-  // Mock AI insights generation
-  const generateMockAIInsights = (results: any) => {
-    return {
-      keyFindings: [
-        "The regression model exhibits strong explanatory power, with an R-squared value of 0.742 suggesting that approximately 74% of the variance in the dependent variable can be attributed to the selected independent variables. This level of explanatory power indicates a robust relationship between the predictors and the outcome variable.",
-        
-        "Statistical significance analysis reveals that the majority of included variables demonstrate meaningful relationships with the dependent variable. The F-statistic provides strong evidence that the model performs significantly better than a baseline model with no predictors, validating the overall model specification.",
-        
-        "The adjusted R-squared value of 0.738 remains close to the unadjusted R-squared, indicating that the model does not suffer from overfitting due to excessive variables. This suggests that the selected predictors genuinely contribute to explaining the variance rather than merely capitalizing on random variation in the data.",
-        
-        "Coefficient magnitudes and their associated standard errors indicate stable parameter estimates. The statistical significance levels observed across different variables provide insights into which factors have the strongest and most reliable effects on the dependent variable, enabling prioritization of policy or business interventions."
-      ],
-      recommendations: [
-        "Consider adding interaction terms between significant variables to capture more complex relationships",
-        "Test robustness with alternative model specifications",
-        "Examine residual plots to verify model assumptions",
-        "Consider time series analysis if data has temporal structure"
-      ],
-      technicalNotes: {
-        modelSpecification: {
-          title: "Model Specification Analysis",
-          content: "The current model specification appears well-balanced with an appropriate number of predictors relative to the sample size. The ratio of observations to parameters suggests adequate degrees of freedom for reliable statistical inference. The inclusion of multiple independent variables allows for controlling confounding effects while examining individual variable impacts."
-        },
-        statisticalAssumptions: {
-          title: "Statistical Assumptions Assessment",
-          content: "Key regression assumptions should be verified through diagnostic testing. The model assumes linear relationships between predictors and the dependent variable, independence of observations, homoscedasticity (constant variance of residuals), and normality of residuals. Violation of these assumptions could affect the reliability of coefficient estimates and statistical tests."
-        },
-        coefficientReliability: {
-          title: "Coefficient Reliability and Interpretation",
-          content: "Standard errors relative to coefficient magnitudes indicate the precision of parameter estimates. Smaller standard errors relative to coefficients suggest more reliable estimates. The t-statistics and associated p-values provide evidence for statistical significance, while confidence intervals would offer additional insight into the range of plausible parameter values."
-        },
-        modelValidation: {
-          title: "Model Validation and Robustness",
-          content: "The high F-statistic and low p-value indicate strong overall model significance. However, additional validation through cross-validation, out-of-sample testing, or alternative model specifications would strengthen confidence in the results. Consider examining residual patterns to identify potential model improvements or assumption violations."
-        },
-        practicalSignificance: {
-          title: "Practical vs Statistical Significance",
-          content: "While statistical significance indicates reliable effects, practical significance depends on the magnitude of coefficients in the context of the problem domain. Large coefficients may indicate substantial practical impact, while small coefficients might be statistically significant but practically negligible. Economic or business significance should be evaluated alongside statistical measures."
-        }
-      }
-    };
-  };
-
-  const aiInsights = generateMockAIInsights(results);
-  const modelAssessment = getModelAssessment();
   const significantVars = results.coefficients.filter((c: any) => c.significance !== '').length;
 
-  const handleGenerateInsights = () => {
+  const handleGenerateInsights = async () => {
     setIsLoadingInsights(true);
-    setTimeout(() => {
-      setIsLoadingInsights(false);
+    
+    try {
+      // Prepare data for Claude service
+      const requestData = {
+        rSquared: results.rSquared,
+        adjustedRSquared: results.adjustedRSquared,
+        pValueF: results.pValueF,
+        significantVars,
+        totalVars: results.coefficients.length,
+        dependentVariable: results.dependentVariable,
+      };
+
+      // Generate insights using Claude service
+      const insights = await ClaudeService.generateInsights(requestData);
+      setAiInsights(insights);
       setIsAIInsightsOpen(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to generate insights:', error);
+      // Fallback to showing interface without insights
+      setIsAIInsightsOpen(true);
+    } finally {
+      setIsLoadingInsights(false);
+    }
   };
 
   return (
@@ -140,61 +98,55 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
           />
 
           {/* Key Insights Cards */}
-          <div>
-            <h4 className="text-lg font-semibold text-slate-800 mb-4 flex items-center space-x-2">
-              <Brain size={18} className="text-blue-600" />
-              <span>Key Insights</span>
-            </h4>
-            <InsightCards 
-              keyFindings={aiInsights.keyFindings}
-              rSquared={results.rSquared}
-              adjustedRSquared={results.adjustedRSquared}
-              pValueF={results.pValueF}
-            />
-          </div>
+          {aiInsights && (
+            <div>
+              <h4 className="text-lg font-semibold text-slate-800 mb-4 flex items-center space-x-2">
+                <Brain size={18} className="text-blue-600" />
+                <span>AI Analysis</span>
+              </h4>
+              <OptimizedInsightCards insights={aiInsights.keyInsights} />
+            </div>
+          )}
 
           {/* Actionable Recommendations */}
-          <Collapsible>
-            <CollapsibleTrigger className="w-full">
-              <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                    <Brain size={18} className="text-blue-600" />
-                    <span>Recommended Actions</span>
-                  </h4>
-                  <ChevronDown size={18} className="text-slate-600" />
+          {aiInsights && (
+            <Collapsible>
+              <CollapsibleTrigger className="w-full">
+                <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
+                      <Brain size={18} className="text-blue-600" />
+                      <span>Recommended Actions</span>
+                    </h4>
+                    <ChevronDown size={18} className="text-slate-600" />
+                  </div>
                 </div>
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2">
-              <ActionCards recommendations={aiInsights.recommendations} />
-            </CollapsibleContent>
-          </Collapsible>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2">
+                <OptimizedActionCards recommendations={aiInsights.recommendations} />
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
           {/* Technical Analysis */}
-          <Collapsible>
-            <CollapsibleTrigger className="w-full">
-              <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                    <Brain size={18} className="text-blue-600" />
-                    <span>Technical Analysis</span>
-                  </h4>
-                  <ChevronDown size={18} className="text-slate-600" />
-                </div>
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2">
-              <div className="bg-white rounded-lg border border-blue-200 divide-y divide-slate-200">
-                {Object.entries(aiInsights.technicalNotes).map(([key, section]) => (
-                  <div key={key} className="p-4">
-                    <h5 className="text-sm font-semibold text-slate-800 mb-2">{section.title}</h5>
-                    <p className="text-sm text-slate-600 leading-relaxed">{section.content}</p>
+          {aiInsights && (
+            <Collapsible>
+              <CollapsibleTrigger className="w-full">
+                <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
+                      <Brain size={18} className="text-blue-600" />
+                      <span>Technical Notes</span>
+                    </h4>
+                    <ChevronDown size={18} className="text-slate-600" />
                   </div>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2">
+                <OptimizedTechnicalNotes notes={aiInsights.technicalNotes} />
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </CardContent>
       )}
     </Card>
