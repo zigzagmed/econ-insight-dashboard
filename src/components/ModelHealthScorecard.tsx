@@ -84,7 +84,7 @@ export const ModelHealthScorecard: React.FC<ModelHealthScorecardProps> = ({
               </div>
               <Progress value={(significantVars / totalVars) * 100} className="h-2" />
               <div className="text-xs text-slate-500">
-                {((significantVars / totalVars) * 100).toFixed(0)}% significant at p < 0.05
+                {((significantVars / totalVars) * 100).toFixed(0)}% significant at p &lt; 0.05
               </div>
             </div>
           </div>
