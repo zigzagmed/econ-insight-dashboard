@@ -175,6 +175,46 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* R² and Model Fit */}
+      <Card>
+        <CardHeader>
+          <CardTitle>R² and Overall Model Fit</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-slate-800 mb-2">R-squared: {formatNumber(rSquared, 3)}</h4>
+                <p className="text-slate-600 text-sm">
+                  {(rSquared * 100).toFixed(1)}% of the variation in {dependentVariable} is explained by the model. 
+                  {rSquared >= 0.7 ? ' This indicates a strong fit.' : 
+                   rSquared >= 0.5 ? ' This indicates a moderate fit.' : 
+                   ' This indicates a weak fit.'}
+                </p>
+              </div>
+              
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-slate-800 mb-2">Adjusted R-squared: {formatNumber(adjustedRSquared, 3)}</h4>
+                <p className="text-slate-600 text-sm">
+                  Accounts for the number of predictors. The difference of {Math.abs(rSquared - adjustedRSquared).toFixed(3)} suggests 
+                  {Math.abs(rSquared - adjustedRSquared) < 0.02 ? ' minimal overfitting.' : ' some potential overfitting.'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-orange-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-slate-800 mb-2">Overall Model Significance</h4>
+              <p className="text-slate-600 text-sm">
+                F-statistic p-value: {pValueF < 0.001 ? '< 0.001' : formatNumber(pValueF, 3)}
+                {pValueF < 0.05 ? 
+                  ' — The model is statistically significant, meaning the predictors collectively explain a significant portion of the variance.' : 
+                  ' — The model is not statistically significant at the 5% level.'}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

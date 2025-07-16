@@ -82,15 +82,9 @@ const Dashboard = () => {
 
         {/* Navigation */}
         <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 1}
-            className="flex items-center space-x-2"
-          >
-            <ChevronLeft size={16} />
-            <span>Back</span>
-          </Button>
+          {currentStep === 1 && (
+            <div></div>
+          )}
           
           {currentStep === 1 && (
             <Button
@@ -105,12 +99,12 @@ const Dashboard = () => {
 
           {currentStep === 2 && (
             <Button
-              onClick={handleBack}
+              onClick={() => setCurrentStep(1)}
               variant="outline"
               className="flex items-center space-x-2"
             >
               <ChevronLeft size={16} />
-              <span>Modify Model</span>
+              <span>Variable & Model Selection</span>
             </Button>
           )}
         </div>
