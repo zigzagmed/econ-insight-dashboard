@@ -35,7 +35,7 @@ const VariableSelection: React.FC<VariableSelectionProps> = ({ modelConfig, setM
     setModelConfig({ ...modelConfig, dependentVariable: variable });
   };
 
-  const addIndependentVariable = (variable: string) => {
+  const handleIndependentVariableChange = (variable: string) => {
     if (!modelConfig.independentVariables.includes(variable) && variable !== modelConfig.dependentVariable) {
       setModelConfig({
         ...modelConfig,
@@ -60,6 +60,11 @@ const VariableSelection: React.FC<VariableSelectionProps> = ({ modelConfig, setM
     }
   };
 
+  const availableIndependentVariables = sampleVariables.filter(
+    variable => variable.name !== modelConfig.dependentVariable && 
+                !modelConfig.independentVariables.includes(variable.name)
+  );
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -67,142 +72,109 @@ const VariableSelection: React.FC<VariableSelectionProps> = ({ modelConfig, setM
         <p className="text-slate-600">Select your model type and variables to get started</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Available Variables */}
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <span>Available Variables</span>
-              <Badge variant="secondary">{sampleVariables.length}</Badge>
-            </CardTitle>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        {/* Model Type Selection */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Model Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {sampleVariables.map((variable) => (
-                <div
-                  key={variable.name}
-                  className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-medium text-slate-800">{variable.name}</span>
-                      <Badge className={`text-xs ${getVariableTypeColor(variable.type)}`}>
-                        {variable.type}
-                      </Badge>
-                    </div>
-                    {variable.description && (
-                      <p className="text-sm text-slate-600">{variable.description}</p>
-                    )}
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => addIndependentVariable(variable.name)}
-                    disabled={modelConfig.independentVariables.includes(variable.name) || variable.name === modelConfig.dependentVariable}
-                    className="ml-2"
-                  >
-                    <Plus size={14} />
-                  </Button>
-                </div>
-              ))}
+            <Select value={modelConfig.type} onValueChange={handleModelTypeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select model type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="linear">Linear Regression</SelectItem>
+                <SelectItem value="logistic">Logistic Regression</SelectItem>
+                <SelectItem value="polynomial">Polynomial Regression</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="mt-2 text-xs text-slate-600">
+              {modelConfig.type === 'linear' && 'Continuous outcomes'}
+              {modelConfig.type === 'logistic' && 'Binary outcomes'}
+              {modelConfig.type === 'polynomial' && 'Non-linear relationships'}
             </div>
           </CardContent>
         </Card>
 
-        {/* Model Configuration */}
-        <div className="space-y-6">
-          {/* Model Type Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Model Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select value={modelConfig.type} onValueChange={handleModelTypeChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select model type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="linear">Linear Regression</SelectItem>
-                  <SelectItem value="logistic">Logistic Regression</SelectItem>
-                  <SelectItem value="polynomial">Polynomial Regression</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="mt-2 text-sm text-slate-600">
-                {modelConfig.type === 'linear' && 'Best for continuous dependent variables'}
-                {modelConfig.type === 'logistic' && 'Best for binary dependent variables'}
-                {modelConfig.type === 'polynomial' && 'Best for non-linear relationships'}
-              </div>
-            </CardContent>
-          </Card>
+        {/* Dependent Variable */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Dependent Variable</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select value={modelConfig.dependentVariable} onValueChange={handleDependentVariableChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Y variable" />
+              </SelectTrigger>
+              <SelectContent>
+                {sampleVariables.map((variable) => (
+                  <SelectItem key={variable.name} value={variable.name}>
+                    <div className="flex items-center space-x-2">
+                      <span>{variable.name}</span>
+                      <Badge className={`text-xs ${getVariableTypeColor(variable.type)}`}>
+                        {variable.type}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
-          {/* Dependent Variable */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dependent Variable (Y)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select value={modelConfig.dependentVariable} onValueChange={handleDependentVariableChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select dependent variable" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sampleVariables.map((variable) => (
-                    <SelectItem key={variable.name} value={variable.name}>
-                      <div className="flex items-center space-x-2">
-                        <span>{variable.name}</span>
-                        <Badge className={`text-xs ${getVariableTypeColor(variable.type)}`}>
-                          {variable.type}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          {/* Independent Variables */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Independent Variables (X)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {modelConfig.independentVariables.length === 0 ? (
-                  <p className="text-slate-500 text-center py-4">
-                    Click the + button next to variables to add them as independent variables
-                  </p>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {modelConfig.independentVariables.map((variable) => {
-                      const variableInfo = sampleVariables.find(v => v.name === variable);
-                      return (
-                        <Badge
-                          key={variable}
-                          variant="secondary"
-                          className="flex items-center space-x-2 px-3 py-1"
+        {/* Independent Variables */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Independent Variables</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select value="" onValueChange={handleIndependentVariableChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Add X variables" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableIndependentVariables.map((variable) => (
+                  <SelectItem key={variable.name} value={variable.name}>
+                    <div className="flex items-center space-x-2">
+                      <span>{variable.name}</span>
+                      <Badge className={`text-xs ${getVariableTypeColor(variable.type)}`}>
+                        {variable.type}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {/* Selected Independent Variables */}
+            {modelConfig.independentVariables.length > 0 && (
+              <div className="mt-3 space-y-2">
+                <div className="text-xs text-slate-600 mb-2">Selected ({modelConfig.independentVariables.length}):</div>
+                <div className="flex flex-wrap gap-1">
+                  {modelConfig.independentVariables.map((variable) => {
+                    const variableInfo = sampleVariables.find(v => v.name === variable);
+                    return (
+                      <Badge
+                        key={variable}
+                        variant="secondary"
+                        className="flex items-center space-x-1 text-xs px-2 py-1"
+                      >
+                        <span>{variable}</span>
+                        <button
+                          onClick={() => removeIndependentVariable(variable)}
+                          className="ml-1 hover:bg-red-100 rounded-full p-0.5"
                         >
-                          <span>{variable}</span>
-                          {variableInfo && (
-                            <span className={`text-xs px-1 rounded ${getVariableTypeColor(variableInfo.type)}`}>
-                              {variableInfo.type}
-                            </span>
-                          )}
-                          <button
-                            onClick={() => removeIndependentVariable(variable)}
-                            className="ml-2 hover:bg-red-100 rounded-full p-0.5"
-                          >
-                            <X size={12} />
-                          </button>
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                )}
+                          <X size={10} />
+                        </button>
+                      </Badge>
+                    );
+                  })}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
