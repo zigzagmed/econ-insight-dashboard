@@ -79,6 +79,7 @@ const RegressionResults: React.FC<RegressionResultsProps> = ({ modelConfig }) =>
         dependentVariable={results.dependentVariable}
         coefficients={results.coefficients}
         intercept={results.intercept}
+        modelType={results.modelType}
       />
 
       <AIInsights results={results} />
