@@ -72,7 +72,7 @@ const VariableSelection: React.FC<VariableSelectionProps> = ({ modelConfig, setM
         <p className="text-slate-600">Select your model type and variables to get started</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div className="space-y-6 max-w-2xl mx-auto">
         {/* Model Type Selection */}
         <Card>
           <CardHeader className="pb-3">
