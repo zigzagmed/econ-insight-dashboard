@@ -88,65 +88,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       
       {isAIInsightsOpen && (
         <CardContent className="space-y-6">
-          {/* Model Health Scorecard */}
-          <ModelHealthScorecard 
-            rSquared={results.rSquared}
-            adjustedRSquared={results.adjustedRSquared}
-            pValueF={results.pValueF}
-            significantVars={significantVars}
-            totalVars={results.coefficients.length}
-          />
-
-          {/* Key Insights Cards */}
-          {aiInsights && (
-            <div>
-              <h4 className="text-lg font-semibold text-slate-800 mb-4 flex items-center space-x-2">
-                <Brain size={18} className="text-blue-600" />
-                <span>AI Analysis</span>
-              </h4>
-              <OptimizedInsightCards insights={aiInsights.keyInsights} />
-            </div>
-          )}
-
-          {/* Actionable Recommendations */}
-          {aiInsights && (
-            <Collapsible>
-              <CollapsibleTrigger className="w-full">
-                <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                      <Brain size={18} className="text-blue-600" />
-                      <span>Recommended Actions</span>
-                    </h4>
-                    <ChevronDown size={18} className="text-slate-600" />
-                  </div>
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-2">
-                <OptimizedActionCards recommendations={aiInsights.recommendations} />
-              </CollapsibleContent>
-            </Collapsible>
-          )}
-
-          {/* Technical Analysis */}
-          {aiInsights && (
-            <Collapsible>
-              <CollapsibleTrigger className="w-full">
-                <div className="bg-white p-4 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-base font-semibold text-slate-800 flex items-center space-x-2">
-                      <Brain size={18} className="text-blue-600" />
-                      <span>Technical Notes</span>
-                    </h4>
-                    <ChevronDown size={18} className="text-slate-600" />
-                  </div>
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-2">
-                <OptimizedTechnicalNotes notes={aiInsights.technicalNotes} />
-              </CollapsibleContent>
-            </Collapsible>
-          )}
         </CardContent>
       )}
     </Card>
