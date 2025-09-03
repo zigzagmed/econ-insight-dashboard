@@ -4,10 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Brain, ChevronDown } from 'lucide-react';
-import { ModelHealthScorecard } from './ModelHealthScorecard';
-import { OptimizedInsightCards } from './OptimizedInsightCards';
-import { OptimizedActionCards } from './OptimizedActionCards';
-import { OptimizedTechnicalNotes } from './OptimizedTechnicalNotes';
 import { ClaudeService } from '@/services/claudeService';
 import type { ClaudeInsightsResponse } from '@/services/claudeService';
 
@@ -88,6 +84,58 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
       
       {isAIInsightsOpen && (
         <CardContent className="space-y-6">
+          {aiInsights ? (
+            <div className="space-y-8">
+              {/* Model Summary Section */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground border-b pb-2">
+                  Model Summary
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.modelSummary.paragraph1}
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.modelSummary.paragraph2}
+                  </p>
+                </div>
+              </div>
+
+              {/* Variable Importance Section */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground border-b pb-2">
+                  Variable Importance
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.variableImportance.paragraph1}
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.variableImportance.paragraph2}
+                  </p>
+                </div>
+              </div>
+
+              {/* Practical Use Section */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground border-b pb-2">
+                  Practical Use
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.practicalUse.paragraph1}
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {aiInsights.practicalUse.paragraph2}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">No insights generated yet.</p>
+            </div>
+          )}
         </CardContent>
       )}
     </Card>
