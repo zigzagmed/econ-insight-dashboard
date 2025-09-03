@@ -92,10 +92,10 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
                   Model Summary
                 </h3>
                 <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.modelSummary.paragraph1}
                   </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.modelSummary.paragraph2}
                   </p>
                 </div>
@@ -107,10 +107,10 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
                   Variable Importance
                 </h3>
                 <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.variableImportance.paragraph1}
                   </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.variableImportance.paragraph2}
                   </p>
                 </div>
@@ -122,10 +122,10 @@ const AIInsights: React.FC<AIInsightsProps> = ({ results }) => {
                   Practical Use
                 </h3>
                 <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.practicalUse.paragraph1}
                   </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed">
                     {aiInsights.practicalUse.paragraph2}
                   </p>
                 </div>
