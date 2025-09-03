@@ -183,13 +183,6 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="border-l-4 border-purple-500 pl-4">
-              <h4 className="font-semibold text-slate-800">Model Type: {modelType.charAt(0).toUpperCase() + modelType.slice(1)}</h4>
-              <p className="text-slate-600 text-sm">
-                The type of regression model used for this analysis.
-              </p>
-            </div>
-            
             <div className="border-l-4 border-blue-500 pl-4">
               <h4 className="font-semibold text-slate-800">R-squared: {formatNumber(rSquared, 3)}</h4>
               <p className="text-slate-600 text-sm">

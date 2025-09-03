@@ -19,6 +19,10 @@ export const ModelStatsSection: React.FC<ModelStatsSectionProps> = React.memo(({
     <div className="mb-6 p-4 bg-slate-50 rounded-lg">
       <div className="flex flex-wrap gap-4 text-sm">
         <div className="flex items-center gap-2">
+          <span className="text-slate-600">Model:</span>
+          <Badge variant="secondary">{data.modelType?.charAt(0).toUpperCase() + data.modelType?.slice(1) || 'Linear'}</Badge>
+        </div>
+        <div className="flex items-center gap-2">
           <span className="text-slate-600">R²:</span>
           <Badge variant="secondary">{formatNumber(data.rSquared, 3)}</Badge>
         </div>
