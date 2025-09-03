@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface Coefficient {
   variable: string;
@@ -35,88 +35,86 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
     return num.toFixed(decimals);
   };
 
-  // Generate regression equation with hover tooltips
-  const generateEquationWithTooltips = () => {
+  // Generate regression equation with click popovers
+  const generateEquationWithPopovers = () => {
     const intercept_val = formatNumber(intercept.coefficient, 3);
     
     return (
-      <TooltipProvider>
-        <div className="text-lg font-mono font-semibold text-blue-800 mb-2">
-          <Tooltip>
-            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
-              {dependentVariable}
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <div className="space-y-1">
-                <p className="font-medium">Dependent Variable: {dependentVariable}</p>
-                <p className="text-sm text-muted-foreground">
-                  The outcome variable being predicted by the model
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-          <span> = </span>
-          <Tooltip>
-            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
-              {intercept_val}
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <div className="space-y-1">
-                <p className="font-medium">Intercept: {intercept_val}</p>
-                <p className="text-sm text-muted-foreground">
-                  The expected value of {dependentVariable} when all predictors equal zero
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-          {coefficients.map((c, index) => (
-            <span key={index}>
-              <span> {c.coefficient >= 0 ? '+' : ''}</span>
-              <Tooltip>
-                <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
-                  {formatNumber(c.coefficient, 3)}
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
-                    <p className="font-medium">Coefficient: {formatNumber(c.coefficient, 3)}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Each unit increase in {c.variable} {c.coefficient > 0 ? 'increases' : 'decreases'} {dependentVariable} by {Math.abs(c.coefficient).toFixed(3)} units
-                    </p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-              <span>×</span>
-              <Tooltip>
-                <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
-                  {c.variable}
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
-                    <p className="font-medium">Variable: {c.variable}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {c.significance ? `Statistically significant (${c.significance})` : 'Not statistically significant'}
-                    </p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </span>
-          ))}
-          <span> + </span>
-          <Tooltip>
-            <TooltipTrigger className="hover:bg-blue-100 px-1 rounded transition-colors">
-              ε
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <div className="space-y-1">
-                <p className="font-medium">Error Term (ε)</p>
-                <p className="text-sm text-muted-foreground">
-                  Represents unexplained variation and random errors
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </TooltipProvider>
+      <div className="text-lg font-mono font-semibold text-blue-800 mb-2">
+        <Popover>
+          <PopoverTrigger className="hover:bg-blue-100 px-1 rounded transition-colors cursor-pointer">
+            {dependentVariable}
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-1">
+              <p className="font-medium">Dependent Variable: {dependentVariable}</p>
+              <p className="text-sm text-muted-foreground">
+                The outcome variable being predicted by the model
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+        <span> = </span>
+        <Popover>
+          <PopoverTrigger className="hover:bg-blue-100 px-1 rounded transition-colors cursor-pointer">
+            {intercept_val}
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-1">
+              <p className="font-medium">Intercept: {intercept_val}</p>
+              <p className="text-sm text-muted-foreground">
+                The expected value of {dependentVariable} when all predictors equal zero
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+        {coefficients.map((c, index) => (
+          <span key={index}>
+            <span> {c.coefficient >= 0 ? '+' : ''}</span>
+            <Popover>
+              <PopoverTrigger className="hover:bg-blue-100 px-1 rounded transition-colors cursor-pointer">
+                {formatNumber(c.coefficient, 3)}
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-1">
+                  <p className="font-medium">Coefficient: {formatNumber(c.coefficient, 3)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Each unit increase in {c.variable} {c.coefficient > 0 ? 'increases' : 'decreases'} {dependentVariable} by {Math.abs(c.coefficient).toFixed(3)} units
+                  </p>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <span>×</span>
+            <Popover>
+              <PopoverTrigger className="hover:bg-blue-100 px-1 rounded transition-colors cursor-pointer">
+                {c.variable}
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-1">
+                  <p className="font-medium">Variable: {c.variable}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {c.significance ? `Statistically significant (${c.significance})` : 'Not statistically significant'}
+                  </p>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </span>
+        ))}
+        <span> + </span>
+        <Popover>
+          <PopoverTrigger className="hover:bg-blue-100 px-1 rounded transition-colors cursor-pointer">
+            ε
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-1">
+              <p className="font-medium">Error Term (ε)</p>
+              <p className="text-sm text-muted-foreground">
+                Represents unexplained variation and random errors
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
     );
   };
 
@@ -132,7 +130,7 @@ const ModelInterpretation: React.FC<ModelInterpretationProps> = ({
         <CardContent>
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-center">
-              {generateEquationWithTooltips()}
+              {generateEquationWithPopovers()}
             </div>
           </div>
           <div className="mt-4 text-sm text-slate-600">
